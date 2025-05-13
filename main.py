@@ -71,7 +71,7 @@ def index():
             pdf_filename = f"{session_id}.pdf"
             pdf_path = os.path.join(OUTPUT_FOLDER, pdf_filename)
             images[0].save(pdf_path, save_all=True, append_images=images[1:])
-            return send_file(pdf_path, as_attachment=True)
+            return send_file(pdf_path, as_attachment=True, download_name="converted.pdf")
 
     return render_template('index.html')
 
