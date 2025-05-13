@@ -140,7 +140,12 @@
                         alertBox.className = "alert alert-success mt-3";
                         alertBox.textContent = "Berjaya! Fail PDF sedang dimuat turun.";
                         alertBox.classList.remove("d-none");
-                        window.location.href = window.URL.createObjectURL(xhr.response);
+
+                        // Muat turun PDF selepas proses selesai
+                        const link = document.createElement('a');
+                        link.href = window.URL.createObjectURL(xhr.response);
+                        link.download = "converted.pdf"; // Nama fail PDF
+                        link.click(); // Trigger download tanpa preview
                     } else {
                         alertBox.className = "alert alert-danger mt-3";
                         alertBox.textContent = "Ralat berlaku. Sila cuba lagi.";
