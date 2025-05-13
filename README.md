@@ -8,9 +8,7 @@ A simple web-based app to convert `.webp`, `.png`, `.jpg`, and `.jpeg` images in
 
 - Upload multiple image files (`.webp`, `.png`, `.jpg`, `.jpeg`)
 - Convert images into a single PDF (in upload order)
-- Auto-downloads the generated PDF (no preview)
-- Loading message during processing (multilingual support: English & Malay)
-- Fallback alert for unsupported files or empty upload
+- Auto-downloads the generated PDF
 - Temporary uploads auto-cleaned every hour
 - Lightweight and simple UI
 
