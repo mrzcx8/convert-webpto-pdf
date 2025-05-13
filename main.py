@@ -1,10 +1,10 @@
-from flask import Flask, render_template, request, send_file, redirect, url_for
+from flask import Flask, render_template, request, send_file
 from PIL import Image
 import os
 import re
 import uuid
 import time
-from datetime import datetime
+from datetime import datetime, timedelta
 
 app = Flask(__name__)
 UPLOAD_FOLDER = 'static/uploads'
@@ -12,17 +12,16 @@ OUTPUT_FOLDER = 'output'
 ALLOWED_EXTENSIONS = ['.webp', '.png', '.jpg', '.jpeg']
 LOG_FILE = 'log.txt'
 
-# Pastikan folder wujud
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 os.makedirs(OUTPUT_FOLDER, exist_ok=True)
 
 
-# Fungsi untuk sort ikut nombor fail (natural order)
 def natural_key(text):
-    return [int(s) if s.isdigit() else s.lower() for s in re.split(r'(\d+)', text)]
+    return [
+        int(s) if s.isdigit() else s.lower() for s in re.split(r'(\d+)', text)
+    ]
 
 
-# Bersihkan sesi lama
 def cleanup_old_sessions(folder, max_age_hours=1):
     now = time.time()
     for root, dirs, files in os.walk(folder):
@@ -32,13 +31,12 @@ def cleanup_old_sessions(folder, max_age_hours=1):
                 os.system(f"rm -rf '{path}'")
 
 
-# Log aktiviti pengguna
 def log_activity(session_id, num_files):
     with open(LOG_FILE, 'a') as log:
-        log.write(f"{datetime.now()} - Session: {session_id} - Files: {num_files}\n")
+        log.write(
+            f"{datetime.now()} - Session: {session_id} - Files: {num_files}\n")
 
 
-# Periksa fail yang dibenarkan
 def allowed_file(filename):
     return os.path.splitext(filename.lower())[1] in ALLOWED_EXTENSIONS
 
@@ -73,17 +71,9 @@ def index():
             pdf_filename = f"{session_id}.pdf"
             pdf_path = os.path.join(OUTPUT_FOLDER, pdf_filename)
             images[0].save(pdf_path, save_all=True, append_images=images[1:])
-            return redirect(url_for('download_file', filename=pdf_filename))
+            return send_file(pdf_path, as_attachment=True)
 
     return render_template('index.html')
 
 
-@app.route('/download/<filename>')
-def download_file(filename):
-    path = os.path.join(OUTPUT_FOLDER, filename)
-    return send_file(path, as_attachment=True, download_name="converted.pdf")
-
-
-# Jalankan app
-port = int(os.environ.get("PORT", 5000))
-app.run(host='0.0.0.0', port=port)
+app.run(host='0.0.0.0', port=5000)
